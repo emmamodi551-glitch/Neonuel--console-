@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>NEONUEL: THE HUMAN OS - ALWAYS-ON IDENTITY</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            neonOrange: '#ff7a18',
+            neonAmber: '#ff9933',
+            cyberCyan: '#00e5ff',
+            hudTeal: '#1de9b6',
+            armorPlate: '#111722',
+            titanium: '#2c3545',
+            carbon: '#0c0f14',
+            cyberSteel: '#4b5563'
+          },
+          fontFamily: {
+            orbitron: ['Orbitron', 'sans-serif'],
+            chakra: ['Chakra Petch', 'monospace'],
+            rajdhani: ['Rajdhani', 'sans-serif']
+          },
+          boxShadow: {
+            'orange-glow': '0 0 20px rgba(255, 122, 24, 0.45)',
+            'cyan-glow': '0 0 20px rgba(0, 229, 255, 0.45)',
+            'bezel-inset': 'inset 0 2px 4px rgba(255,255,255,0.1), inset 0 -2px 6px rgba(0,0,0,0.8)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Custom Backgrounds & Cyber Textures */
+    .bg-carbon-weave {
+      background-color: #0b0e14;
+      background-image: 
+        radial-gradient(rgba(0, 229, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(45deg, #11151e 25%, transparent 25%, transparent 75%, #11151e 75%, #11151e),
+        linear-gradient(45deg, #11151e 25%, #0b0e14 25%, #0b0e14 75%, #11151e 75%, #11151e);
+      background-size: 20px 20px, 8px 8px, 8px 8px;
+      background-position: 0 0, 0 0, 4px 4px;
+    }
+
+    .carbon-plate {
+      background: radial-gradient(circle at 50% 30%, #161b24 0%, #0d1017 100%);
+      background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.4) 0px, rgba(0,0,0,0.4) 2px, transparent 2px, transparent 4px);
+    }
+
+    .brushed-metal {
+      background: linear-gradient(180deg, #515d6f 0%, #2f3847 45%, #1b2029 55%, #3d4757 100%);
+    }
+
+    .steel-bezel {
+      background: linear-gradient(135deg, #505c6d 0%, #232a35 48%, #14171d 52%, #384250 100%);
+      border: 1px solid #637184;
+    }
+
+    .rivet {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #748396 30%, #171b22 90%);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.6), 0 1px 2px rgba(0,0,0,0.8);
+      border: 1px solid #1a202c;
+    }
+
+    /* Scanlines Overlay */
+    .scanlines {
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.4) 50%);
+      background-size: 100% 4px;
+      pointer-events: none;
+    }
+
+    .hud-scanner-bar {
+      animation: scanSweep 3.5s ease-in-out infinite;
+    }
+
+    @keyframes scanSweep {
+      0%, 100% { top: 8%; opacity: 0.2; }
+      50% { top: 88%; opacity: 0.85; }
+    }
+
+    /* Pulse Glow */
+    .core-pulse {
+      animation: coreGlow 2.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes coreGlow {
+      from {
+        filter: drop-shadow(0 0 6px rgba(255, 122, 24, 0.6)) brightness(1);
+      }
+      to {
+        filter: drop-shadow(0 0 18px rgba(255, 122, 24, 0.95)) brightness(1.25);
+      }
+    }
+
+    /* Target Reticle Rotation */
+    .rotate-slow {
+      animation: reticleSpin 12s linear infinite;
+    }
+
+    @keyframes reticleSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Custom Scrollbar for Chat & Hub */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090c10;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #ff7a18;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body class="h-full text-slate-200 font-rajdhani select-none overflow-x-hidden bg-black flex justify-center items-center">
+
+  <!-- Main HUD Frame Container (Strict Mobile Proportions with Desktop Max-W) -->
+  <main id="app-container" class="relative w-full max-w-md h-full sm:h-[94vh] sm:max-h-[920px] bg-carbon-weave border border-slate-700/60 sm:rounded-3xl shadow-[0_0_50px_rgba(0,0,0,0.9)] flex flex-col justify-between overflow-hidden">
+    
+    <!-- Holographic Scanline Overlay -->
+    <div class="absolute inset-0 scanlines z-10 pointer-events-none opacity-40"></div>
+    <div class="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent hud-scanner-bar z-10 pointer-events-none"></div>
+
+    <!-- AUDIO SFX & SYSTEM CONTROLS (Floating top buttons) -->
+    <div class="absolute top-3 right-3 z-30 flex items-center space-x-2">
+      <button id="sfx-toggle-btn" class="px-2.5 py-1 rounded border border-cyan-500/40 bg-slate-900/80 backdrop-blur text-cyan-400 text-xs font-chakra flex items-center gap-1.5 hover:border-cyan-400 hover:text-cyan-300 transition shadow-sm active:scale-95" title="Toggle Synthesized Audio Feedback">
+        <i id="sfx-icon" class="fas fa-volume-up text-[10px]"></i>
+        <span id="sfx-status">SFX: ON</span>
+      </button>
+      <button id="share-hub-btn" class="w-8 h-8 rounded border border-slate-600/70 bg-slate-900/80 text-slate-300 flex items-center justify-center text-xs hover:border-neonOrange hover:text-neonOrange transition active:scale-95" title="Copy Console Link">
+        <i class="fas fa-arrow-up-from-bracket text-xs"></i>
+      </button>
+    </div>
+
+    <!-- TOP HEADER: System Telemetry & Always-on Identity -->
+    <header class="relative z-20 pt-4 px-4 pb-2 border-b border-cyan-900/40 bg-gradient-to-b from-slate-950 via-slate-900/90 to-transparent backdrop-blur-sm">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-2">
+          <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_#34d399] animate-pulse"></span>
+          <span class="font-chakra text-[11px] font-semibold tracking-wider text-emerald-400">SYS ONLINE</span>
+          <span class="text-slate-600">|</span>
+          <span class="font-chakra text-[10px] text-cyan-400 font-mono tracking-wider">LATENCY: <span id="latency-counter">14</span>ms</span>
+        </div>
+        <div class="pr-20 flex items-center space-x-2 text-[10px] font-chakra text-slate-400">
+          <i class="fas fa-wifi text-cyan-400"></i>
+          <span>CORE: <span class="text-neonAmber">100%</span></span>
+          <i class="fas fa-battery-three-quarters text-emerald-400"></i>
+        </div>
+      </div>
+
+      <div class="mt-2 text-left">
+        <h1 class="font-orbitron font-extrabold text-lg sm:text-xl tracking-wider text-slate-100 uppercase flex items-center gap-2">
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-slate-100 via-slate-200 to-slate-400">NEONUEL</span>
+          <span class="text-xs px-1.5 py-0.5 rounded border border-neonOrange/50 bg-neonOrange/10 text-neonOrange font-chakra font-medium tracking-normal">HUMAN OS</span>
+        </h1>
+        <p class="font-chakra text-[10px] tracking-[0.22em] text-slate-400 uppercase font-semibold flex items-center gap-1.5">
+          <i class="fas fa-shield-halved text-[9px] text-cyan-400"></i> ALWAYS-ON IDENTITY ARCHITECTURE
+        </p>
+      </div>
+    </header>
+
+    <!-- CENTRAL INTERACTIVE AVATAR / CYBORG HOLOGRAM VIEW -->
+    <section class="relative z-20 flex-1 flex flex-col items-center justify-center px-4 py-1 min-h-[220px]">
+      
+      <!-- Background Cyber Matrix Target Reticle -->
+      <div class="absolute w-56 h-56 rounded-full border border-cyan-500/20 pointer-events-none flex items-center justify-center">
+        <div class="w-48 h-48 rounded-full border border-dashed border-cyan-400/30 rotate-slow"></div>
+        <div class="absolute w-60 h-60 rounded-full border-t-2 border-b-2 border-neonOrange/30"></div>
+      </div>
+
+      <!-- Holographic Avatar Container -->
+      <div id="avatar-container" class="relative group cursor-pointer w-48 h-56 flex items-center justify-center transition-transform duration-300 active:scale-95" title="Click to trigger Biometric Calibration">
+        
+        <!-- Synthetic SVG Cyborg Avatar Matching Visual Branding -->
+        <svg class="w-full h-full drop-shadow-[0_10px_25px_rgba(0,0,0,0.8)]" viewBox="0 0 240 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Metallic Skull & Neck Chassis -->
+          <defs>
+            <linearGradient id="armorMetal" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3b4859" />
+              <stop offset="45%" stop-color="#1e2633" />
+              <stop offset="70%" stop-color="#121822" />
+              <stop offset="100%" stop-color="#2d3748" />
+            </linearGradient>
+            <linearGradient id="neonGlowGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#ff7a18" />
+              <stop offset="100%" stop-color="#ffaa33" />
+            </linearGradient>
+            <filter id="glowEffect" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+
+          <!-- Torso & Cybernetic Armor Shoulders -->
+          <path d="M40 260 L60 210 L85 200 L120 215 L155 200 L180 210 L200 260 Z" fill="url(#armorMetal)" stroke="#4a5568" stroke-width="2"/>
+          <path d="M70 215 L85 245 L120 260 L155 245 L170 215 Z" fill="#141a24" stroke="#2d3748" stroke-width="1.5"/>
+
+          <!-- Glowing Orange Rib & Harness Accents -->
+          <path d="M68 220 L80 238" stroke="#ff7a18" stroke-width="3" stroke-linecap="round" filter="url(#glowEffect)"/>
+          <path d="M172 220 L160 238" stroke="#ff7a18" stroke-width="3" stroke-linecap="round" filter="url(#glowEffect)"/>
+          <path d="M50 248 L65 258" stroke="#ff7a18" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M190 248 L175 258" stroke="#ff7a18" stroke-width="2.5" stroke-linecap="round"/>
+
+          <!-- Glowing Core Chevron Logo on Chest -->
+          <g class="core-pulse" transform="translate(120, 240)">
+            <path d="M-14 -6 L-4 6 L-4 0 L4 -6 L14 6" stroke="url(#neonGlowGrad)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <circle cx="0" cy="1" r="3" fill="#ff9933" />
+          </g>
+
+          <!-- Cybernetic Neck Hydraulic Tubes -->
+          <rect x="100" y="155" width="40" height="48" rx="4" fill="#18202c" stroke="#334155" stroke-width="1.5"/>
+          <line x1="108" y1="160" x2="108" y2="195" stroke="#ff7a18" stroke-width="2" opacity="0.8"/>
+          <line x1="120" y1="160" x2="120" y2="198" stroke="#00e5ff" stroke-width="2" opacity="0.7"/>
+          <line x1="132" y1="160" x2="132" y2="195" stroke="#ff7a18" stroke-width="2" opacity="0.8"/>
+
+          <!-- Cyborg Head Shell -->
+          <path d="M80 90 C80 45 100 25 120 25 C140 25 160 45 160 90 C160 135 142 165 120 165 C98 165 80 135 80 90 Z" fill="url(#armorMetal)" stroke="#64748b" stroke-width="2"/>
+
+          <!-- Armor Seam Lines across Cranium -->
+          <path d="M92 65 C105 50 135 50 148 65" stroke="#0f172a" stroke-width="2.5" fill="none"/>
+          <path d="M120 25 L120 70" stroke="#0f172a" stroke-width="2"/>
+          <line x1="90" y1="95" x2="105" y2="100" stroke="#475569" stroke-width="2"/>
+          <line x1="150" y1="95" x2="135" y2="100" stroke="#475569" stroke-width="2"/>
+
+          <!-- Forehead 'N' Chip Insignia -->
+          <rect x="114" y="44" width="12" height="12" rx="2" fill="#0f172a" stroke="#ff7a18" stroke-width="1.5"/>
+          <path d="M117 53 L117 47 L123 53 L123 47" stroke="#ff9933" stroke-width="1.2" stroke-linecap="round"/>
+
+          <!-- Left Eye: Organic Natural Sensor -->
+          <ellipse cx="106" cy="92" rx="6" ry="3.5" fill="#1e293b" stroke="#334155" stroke-width="1.5"/>
+          <circle cx="106" cy="92" r="2" fill="#94a3b8"/>
+
+          <!-- Right Eye: Ocular Cybernetic Implant with Multi-Ring HUD -->
+          <circle cx="134" cy="92" r="13" fill="#0f172a" stroke="#ff7a18" stroke-width="2" filter="url(#glowEffect)"/>
+          <circle cx="134" cy="92" r="9" stroke="#ff9933" stroke-width="1.5" stroke-dasharray="4 2" class="rotate-slow"/>
+          <circle cx="134" cy="92" r="4.5" fill="#ff7a18"/>
+          <circle cx="134" cy="92" r="2" fill="#fff" />
+          <!-- Implaned Gear Teeth Accent -->
+          <path d="M147 92 L152 92 M134 79 L134 74 M121 92 L116 92 M134 105 L134 110" stroke="#ff7a18" stroke-width="1.5"/>
+
+          <!-- Jawline & Audio Vocoder Grille -->
+          <path d="M106 135 L134 135 L128 152 L112 152 Z" fill="#090d14" stroke="#475569" stroke-width="1.5"/>
+          <line x1="110" y1="140" x2="130" y2="140" stroke="#00e5ff" stroke-width="1.2" opacity="0.8"/>
+          <line x1="112" y1="144" x2="128" y2="144" stroke="#ff7a18" stroke-width="1.2" opacity="0.9"/>
+          <line x1="114" y1="148" x2="126" y2="148" stroke="#00e5ff" stroke-width="1.2" opacity="0.8"/>
+        </svg>
+
+        <!-- Tap Interaction Hint -->
+        <span class="absolute bottom-1 px-2 py-0.5 text-[9px] font-chakra tracking-widest uppercase bg-slate-900/90 text-cyan-400 border border-cyan-500/30 rounded backdrop-blur opacity-80 group-hover:opacity-100 group-hover:border-neonOrange transition">
+          <i class="fas fa-fingerprint mr-1 text-neonOrange"></i>TAP TO DIAGNOSE
+        </span>
+      </div>
+
+      <!-- Quick Interactive Diagnostic Readout Ticker -->
+      <div id="diagnostic-ticker" class="w-full mt-2 px-3 py-1.5 rounded-lg bg-slate-950/70 border border-slate-800 text-[11px] font-chakra flex items-center justify-between text-slate-300">
+        <div class="flex items-center gap-1.5">
+          <i class="fas fa-microchip text-neonOrange text-[10px]"></i>
+          <span class="text-slate-400">NEURAL LINK:</span>
+          <span class="text-emerald-400 font-semibold tracking-wider">SYNCED</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <i class="fas fa-shield-virus text-cyan-400 text-[10px]"></i>
+          <span class="text-slate-400">IDENTITY:</span>
+          <span class="text-cyan-300 font-mono">VERIFIED</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAIN BRANDING PLAQUE (Carbon-Fiber Beveled Plate with Hex Screws) -->
+    <section class="relative z-20 px-3 py-1">
+      <div class="relative steel-bezel rounded-2xl p-0.5 shadow-2xl">
+        
+        <!-- Corner Industrial Fasteners / Rivets -->
+        <div class="absolute top-2 left-2 rivet"></div>
+        <div class="absolute top-2 right-2 rivet"></div>
+        <div class="absolute bottom-2 left-2 rivet"></div>
+        <div class="absolute bottom-2 right-2 rivet"></div>
+
+        <!-- Inner Carbon Fiber Plate -->
+        <div class="carbon-plate rounded-[14px] px-4 py-3.5 border border-slate-700/80 flex flex-col items-center justify-center text-center">
+          
+          <!-- Stylized NUEL Logo Emblem & Typography -->
+          <div class="flex items-center justify-center gap-3">
+            <!-- Interlocking N/Bar Monogram -->
+            <div class="flex items-end gap-1 px-1">
+              <span class="w-2.5 h-7 rounded-sm bg-gradient-to-t from-neonOrange to-neonAmber shadow-[0_0_8px_rgba(255,122,24,0.6)]"></span>
+              <span class="w-2.5 h-10 rounded-sm bg-gradient-to-t from-slate-400 to-slate-200"></span>
+              <span class="w-2.5 h-8 rounded-sm bg-gradient-to-t from-neonOrange to-neonAmber shadow-[0_0_8px_rgba(255,122,24,0.6)]"></span>
+            </div>
+
+            <!-- Stylized 'nuel' text -->
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-wider font-orbitron text-transparent bg-clip-text bg-gradient-to-b from-slate-200 via-slate-300 to-slate-500 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+              nuel
+            </h2>
+          </div>
+
+          <!-- Official Motto -->
+          <p class="font-chakra text-[10px] sm:text-[11px] font-semibold tracking-[0.16em] text-slate-400 uppercase mt-1">
+            CONNECTING NETWORKS. EMPOWERING LIVES.
+          </p>
+
+          <!-- Divider with Glowing Orange Node -->
+          <div class="w-full flex items-center justify-center gap-2 my-2.5 opacity-70">
+            <div class="h-[1px] flex-1 bg-gradient-to-r from-transparent via-slate-600 to-neonOrange"></div>
+            <div class="w-1.5 h-1.5 rounded-full bg-neonOrange shadow-[0_0_6px_#ff7a18]"></div>
+            <div class="h-[1px] flex-1 bg-gradient-to-l from-transparent via-slate-600 to-neonOrange"></div>
+          </div>
+
+          <!-- Contact & Telemetry Directory (Clickable metadata points) -->
+          <div class="w-full space-y-1 text-[11px] sm:text-xs font-chakra">
+            
+            <!-- St. Cloud MN Phone -->
+            <a href="tel:+13202173955" class="group flex items-center justify-center gap-2 text-slate-300 hover:text-neonOrange transition py-0.5">
+              <span class="w-5 h-5 rounded bg-slate-900/90 border border-slate-700 flex items-center justify-center text-neonOrange text-[10px] group-hover:border-neonOrange transition">
+                <i class="fas fa-phone-alt"></i>
+              </span>
+              <span class="text-slate-400 group-hover:text-slate-200">ST. CLOUD, MN:</span>
+              <span class="font-mono text-neonAmber font-semibold group-hover:underline tracking-tight">+1 320-217-3955</span>
+            </a>
+
+            <!-- Email Point -->
+            <a href="mailto:nueldigitalassets@gmail.com" class="group flex items-center justify-center gap-2 text-slate-300 hover:text-cyan-400 transition py-0.5">
+              <span class="w-5 h-5 rounded bg-slate-900/90 border border-slate-700 flex items-center justify-center text-cyan-400 text-[10px] group-hover:border-cyan-400 transition">
+                <i class="fas fa-envelope"></i>
+              </span>
+              <span class="font-mono text-slate-300 group-hover:text-cyan-300 group-hover:underline break-all">nueldigitalassets@gmail.com</span>
+            </a>
+
+            <!-- Official Web Point -->
+            <a href="https://digital.nuelpropertyservices.com" target="_blank" rel="noopener noreferrer" class="group flex items-center justify-center gap-2 text-slate-300 hover:text-hudTeal transition py-0.5">
+              <span class="w-5 h-5 rounded bg-slate-900/90 border border-slate-700 flex items-center justify-center text-hudTeal text-[10px] group-hover:border-hudTeal transition">
+                <i class="fas fa-globe"></i>
+              </span>
+              <span class="font-mono text-slate-300 group-hover:text-hudTeal group-hover:underline">digital.nuelpropertyservices.com</span>
+              <i class="fas fa-external-link-alt text-[9px] text-slate-500 group-hover:text-hudTeal"></i>
+            </a>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTERACTIVE ACTION HUD BAR (3 Holographic Circular Actuators) -->
+    <section class="relative z-20 px-3 py-2">
+      <!-- Cyber Deck Horizon Wave Graphic -->
+      <div class="relative flex items-center justify-around py-1">
+        
+        <!-- BUTTON 1: CALL -->
+        <div class="flex flex-col items-center">
+          <button id="hud-call-btn" class="relative group w-16 h-16 rounded-full p-1 bg-gradient-to-b from-slate-700 via-slate-800 to-slate-950 shadow-[0_0_15px_rgba(255,122,24,0.3)] hover:shadow-orange-glow transition duration-300 flex items-center justify-center active:scale-90">
+            <!-- Pulsing Holographic Ring -->
+            <div class="absolute inset-0 rounded-full border border-neonOrange/60 group-hover:scale-110 transition duration-300"></div>
+            <!-- Glow core button -->
+            <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center border border-neonAmber/80 shadow-inner group-hover:bg-slate-800">
+              <i class="fas fa-mobile-screen text-xl text-neonAmber group-hover:scale-110 transition"></i>
+            </div>
+          </button>
+          <span class="font-orbitron text-[11px] font-bold text-slate-300 tracking-wider mt-1.5 group-hover:text-neonOrange">CALL</span>
+        </div>
+
+        <!-- BUTTON 2: CHAT -->
+        <div class="flex flex-col items-center">
+          <button id="hud-chat-btn" class="relative group w-16 h-16 rounded-full p-1 bg-gradient-to-b from-cyan-600 via-slate-800 to-slate-950 shadow-[0_0_15px_rgba(0,229,255,0.3)] hover:shadow-cyan-glow transition duration-300 flex items-center justify-center active:scale-90">
+            <!-- Pulsing Holographic Ring -->
+            <div class="absolute inset-0 rounded-full border border-cyan-400/60 group-hover:scale-110 transition duration-300"></div>
+            <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center border border-cyan-400 shadow-inner group-hover:bg-slate-800">
+              <i class="fas fa-comment-dots text-xl text-cyan-400 group-hover:scale-110 transition"></i>
+            </div>
+            <!-- Notification badge -->
+            <span class="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-neonOrange text-[9px] font-chakra font-bold text-black flex items-center justify-center shadow">1</span>
+          </button>
+          <span class="font-orbitron text-[11px] font-bold text-slate-300 tracking-wider mt-1.5 group-hover:text-cyan-400">CHAT</span>
+        </div>
+
+        <!-- BUTTON 3: PROPERTY SERVICES HUB -->
+        <div class="flex flex-col items-center">
+          <button id="hud-hub-btn" class="relative group w-16 h-16 rounded-full p-1 bg-gradient-to-b from-slate-700 via-slate-800 to-slate-950 shadow-[0_0_15px_rgba(29,233,182,0.3)] hover:shadow-[0_0_20px_rgba(29,233,182,0.5)] transition duration-300 flex items-center justify-center active:scale-90">
+            <div class="absolute inset-0 rounded-full border border-hudTeal/60 group-hover:scale-110 transition duration-300"></div>
+            <div class="w-full h-full rounded-full bg-slate-900 flex items-center justify-center border border-hudTeal shadow-inner group-hover:bg-slate-800">
+              <i class="fas fa-map-location-dot text-xl text-hudTeal group-hover:scale-110 transition"></i>
+            </div>
+          </button>
+          <span class="font-orbitron text-[10px] font-bold text-slate-300 tracking-wider mt-1.5 text-center leading-tight">PROPERTY<br>HUB</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- BOTTOM FOOTER PLATE: Brushed Metal Bezel with Embossed NBG Emblem -->
+    <footer class="relative z-20 brushed-metal border-t border-slate-500/50 py-2.5 px-4 shadow-[0_-5px_15px_rgba(0,0,0,0.8)]">
+      <div class="flex items-center justify-between">
+        
+        <!-- Left Machine Bolt -->
+        <div class="rivet"></div>
+
+        <!-- Center Brand Typography -->
+        <div class="flex flex-col items-center justify-center">
+          <div class="flex items-center gap-2">
+            <span class="text-neonOrange text-xs font-black tracking-tighter">|||</span>
+            <span class="font-orbitron font-extrabold text-xs sm:text-sm tracking-widest text-slate-200 uppercase drop-shadow-[0_1px_1px_rgba(0,0,0,0.8)]">
+              NUEL BUSINESS GROUPS
+            </span>
+          </div>
+          <div class="flex items-center gap-1.5 text-[9px] font-chakra font-bold text-slate-400 uppercase tracking-widest mt-0.5">
+            <span class="text-neonAmber">NBG</span>
+            <span>•</span>
+            <span>ENTERPRISE ECOSYSTEM</span>
+          </div>
+        </div>
+
+        <!-- Right Machine Bolt -->
+        <div class="rivet"></div>
+      </div>
+    </footer>
+
+    <!-- MODAL 1: INTERACTIVE CALL / DIALER CONSOLE -->
+    <div id="dialer-modal" class="hidden absolute inset-0 z-40 bg-slate-950/95 backdrop-blur-md flex flex-col justify-between p-5 transition-opacity">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <i class="fas fa-phone-volume text-neonOrange"></i>
+          <span class="font-orbitron font-bold text-sm tracking-wide text-slate-100">NEONUEL TELEPHONY LINK</span>
+        </div>
+        <button id="close-dialer-btn" class="w-8 h-8 rounded-full bg-slate-900 border border-slate-700 text-slate-400 hover:text-white flex items-center justify-center">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="my-auto text-center space-y-4">
+        <div class="inline-block p-4 rounded-full bg-slate-900/90 border border-neonOrange/50 shadow-orange-glow">
+          <i class="fas fa-tower-broadcast text-3xl text-neonAmber animate-pulse"></i>
+        </div>
+        <div>
+          <p class="text-xs font-chakra tracking-widest text-slate-400 uppercase">ST. CLOUD MN DIRECT LINE</p>
+          <h3 class="font-orbitron text-2xl font-bold text-slate-100 tracking-wider mt-1">+1 (320) 217-3955</h3>
+          <p class="text-[11px] font-chakra text-emerald-400 mt-1"><i class="fas fa-circle-check text-[9px] mr-1"></i>DISPATCH STANDBY & AI RECEPTION READY</p>
+        </div>
+
+        <div class="flex flex-col gap-2 max-w-xs mx-auto pt-2">
+          <a href="tel:+13202173955" class="w-full py-3 rounded-xl bg-gradient-to-r from-neonOrange to-neonAmber text-slate-950 font-orbitron font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-orange-glow active:scale-95 transition">
+            <i class="fas fa-phone-alt"></i> CONNECT CELLULAR CARRIER
+          </a>
+          <button id="simulated-call-action-btn" class="w-full py-2.5 rounded-xl bg-slate-900 border border-cyan-500/40 text-cyan-300 font-chakra text-xs font-semibold tracking-wider hover:border-cyan-400 transition active:scale-95">
+            <i class="fas fa-headset mr-1"></i> SIMULATE DISPATCH TEST
+          </button>
+        </div>
+        <p id="dialer-feedback" class="text-[11px] font-chakra text-slate-400 italic min-h-[18px]"></p>
+      </div>
+
+      <div class="text-center font-chakra text-[10px] text-slate-500 border-t border-slate-900 pt-2">
+        CONNECTED TO CENTRAL REGIONAL SWITCH • 256-BIT ENCRYPTED
+      </div>
+    </div>
+
+    <!-- MODAL 2: INTERACTIVE AI CHAT DRAWER -->
+    <div id="chat-modal" class="hidden absolute inset-0 z-40 bg-slate-950/95 backdrop-blur-md flex flex-col justify-between p-4 transition-all">
+      <!-- Chat Header -->
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-full bg-slate-900 border border-cyan-400 flex items-center justify-center text-cyan-300 shadow-[0_0_8px_rgba(0,229,255,0.4)]">
+            <i class="fas fa-robot text-xs"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-orbitron font-bold text-xs text-slate-100">NEONUEL COGNITIVE OS</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+            </div>
+            <p class="font-chakra text-[10px] text-slate-400">Autonomous Concierge & Property Agent</p>
+          </div>
+        </div>
+        <button id="close-chat-btn" class="w-7 h-7 rounded-full bg-slate-900 border border-slate-700 text-slate-400 hover:text-white flex items-center justify-center">
+          <i class="fas fa-times text-xs"></i>
+        </button>
+      </div>
+
+      <!-- Scrollable Message Stream -->
+      <div id="chat-messages-container" class="flex-1 overflow-y-auto my-3 space-y-3 pr-1 text-xs font-chakra">
+        <!-- Initial System Greeting -->
+        <div class="flex items-start gap-2">
+          <div class="w-6 h-6 rounded-full bg-cyan-950 border border-cyan-500/50 flex-shrink-0 flex items-center justify-center text-cyan-400 text-[10px]">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="max-w-[85%] rounded-xl rounded-tl-none bg-slate-900 border border-cyan-900/60 p-2.5 text-slate-200">
+            <p class="font-semibold text-cyan-300 text-[11px] mb-0.5 font-orbitron">NEONUEL v4.2 // INITIALIZED</p>
+            Greetings. I am your always-on Human OS agent for Nuel Business Groups. I can assist with **On-Demand Property Solutions**, **Digital Asset Deployment**, or **IT Network Setup**.
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Action Dialogue Prompts -->
+      <div class="py-1 flex gap-1.5 overflow-x-auto text-[10px] font-chakra pb-2">
+        <button class="quick-chip whitespace-nowrap px-2.5 py-1 rounded-full bg-slate-900 border border-cyan-500/30 text-cyan-300 hover:border-cyan-400 active:scale-95 transition">
+          🛠️ Property Maintenance
+        </button>
+        <button class="quick-chip whitespace-nowrap px-2.5 py-1 rounded-full bg-slate-900 border border-neonOrange/30 text-neonAmber hover:border-neonOrange active:scale-95 transition">
+          ⚡ Digital Asset Setup
+        </button>
+        <button class="quick-chip whitespace-nowrap px-2.5 py-1 rounded-full bg-slate-900 border border-emerald-500/30 text-emerald-300 hover:border-emerald-400 active:scale-95 transition">
+          📍 St. Cloud Availability
+        </button>
+      </div>
+
+      <!-- Message Input Form -->
+      <form id="chat-input-form" class="flex items-center gap-2 pt-1 border-t border-slate-800">
+        <input id="chat-input-field" type="text" placeholder="Transmit instruction or inquiry..." class="flex-1 bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-chakra">
+        <button type="submit" class="w-9 h-9 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 flex items-center justify-center transition active:scale-90 shadow-cyan-glow">
+          <i class="fas fa-paper-plane text-xs"></i>
+        </button>
+      </form>
+    </div>
+
+    <!-- MODAL 3: PROPERTY SERVICES HUB & QUOTE CALCULATOR -->
+    <div id="hub-modal" class="hidden absolute inset-0 z-40 bg-slate-950/95 backdrop-blur-md flex flex-col justify-between p-4 transition-all">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2.5">
+        <div class="flex items-center gap-2">
+          <i class="fas fa-layer-group text-hudTeal"></i>
+          <div>
+            <h3 class="font-orbitron font-bold text-xs text-slate-100 tracking-wide">PROPERTY SERVICES HUB</h3>
+            <p class="font-chakra text-[10px] text-slate-400">Nuel Business Groups • Field & Digital Operations</p>
+          </div>
+        </div>
+        <button id="close-hub-btn" class="w-7 h-7 rounded-full bg-slate-900 border border-slate-700 text-slate-400 hover:text-white flex items-center justify-center">
+          <i class="fas fa-times text-xs"></i>
+        </button>
+      </div>
+
+      <!-- Service Catalog & Interactive Configurator -->
+      <div class="flex-1 overflow-y-auto my-3 pr-1 space-y-2.5 text-xs font-chakra">
+        <p class="text-[11px] text-slate-300 font-medium">Select operational requirements for automatic dispatch calculation:</p>
+
+        <!-- Service Item 1 -->
+        <label class="flex items-start gap-3 p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-hudTeal/50 cursor-pointer transition">
+          <input type="checkbox" class="service-checkbox mt-1 accent-cyan-400" data-name="On-Demand IT & Setup" data-price="149" checked>
+          <div class="flex-1">
+            <div class="flex justify-between items-center">
+              <span class="font-orbitron font-semibold text-slate-200">On-Demand IT & Setup</span>
+              <span class="text-hudTeal font-mono font-bold">$149+</span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-0.5">Workstation provisioning, smart locks, hardware setup, network security.</p>
+          </div>
+        </label>
+
+        <!-- Service Item 2 -->
+        <label class="flex items-start gap-3 p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-neonOrange/50 cursor-pointer transition">
+          <input type="checkbox" class="service-checkbox mt-1 accent-orange-500" data-name="Residential & Commercial Maintenance" data-price="199" checked>
+          <div class="flex-1">
+            <div class="flex justify-between items-center">
+              <span class="font-orbitron font-semibold text-slate-200">Property Inspection & Maintenance</span>
+              <span class="text-neonAmber font-mono font-bold">$199+</span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-0.5">Condition documentation, turn-over prep, rapid physical dispatch.</p>
+          </div>
+        </label>
+
+        <!-- Service Item 3 -->
+        <label class="flex items-start gap-3 p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-400/50 cursor-pointer transition">
+          <input type="checkbox" class="service-checkbox mt-1 accent-cyan-400" data-name="Digital Asset & Web Architecture" data-price="299">
+          <div class="flex-1">
+            <div class="flex justify-between items-center">
+              <span class="font-orbitron font-semibold text-slate-200">Digital Asset & Web Hub</span>
+              <span class="text-cyan-400 font-mono font-bold">$299+</span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-0.5">Deployment of custom web HUD portals, domain linking, and workflow automation.</p>
+          </div>
+        </label>
+
+        <!-- Service Item 4 -->
+        <label class="flex items-start gap-3 p-2.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-400/50 cursor-pointer transition">
+          <input type="checkbox" class="service-checkbox mt-1 accent-emerald-400" data-name="Always-On Habit & System Tracking" data-price="89">
+          <div class="flex-1">
+            <div class="flex justify-between items-center">
+              <span class="font-orbitron font-semibold text-slate-200">Always-On Habit / OS Tracker</span>
+              <span class="text-emerald-400 font-mono font-bold">$89/mo</span>
+            </div>
+            <p class="text-[10px] text-slate-400 mt-0.5">Continuous telemetry, uptime monitoring, and client priority channel.</p>
+          </div>
+        </label>
+
+        <!-- Live Estimate Display -->
+        <div class="p-3 rounded-xl bg-slate-900/90 border border-cyan-900/60 flex items-center justify-between">
+          <div>
+            <span class="text-[10px] uppercase tracking-wider text-slate-400">ESTIMATED CONFIGURATION</span>
+            <div id="service-total-display" class="font-orbitron text-lg font-black text-cyan-300">$348.00</div>
+          </div>
+          <button id="book-service-btn" class="px-3.5 py-2 rounded-xl bg-gradient-to-r from-hudTeal to-cyan-500 text-slate-950 font-orbitron font-bold text-[11px] tracking-wide active:scale-95 transition shadow-cyan-glow">
+            DISPATCH INQUIRY
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Contact Direct Line -->
+      <div class="border-t border-slate-800 pt-2 flex items-center justify-between text-[11px] font-chakra">
+        <span class="text-slate-400">Dispatch Location: St. Cloud, MN</span>
+        <a href="mailto:nueldigitalassets@gmail.com?subject=Property%20Services%20Inquiry" class="text-neonAmber hover:underline">
+          <i class="fas fa-paper-plane mr-1"></i>Email Direct
+        </a>
+      </div>
+    </div>
+
+    <!-- SYSTEM TOAST FEEDBACK NOTIFICATION -->
+    <div id="system-toast" class="hidden absolute top-16 inset-x-6 z-50 p-2.5 rounded-xl bg-slate-900/95 border border-neonOrange text-slate-100 text-xs font-chakra flex items-center justify-between shadow-orange-glow transition-all">
+      <div class="flex items-center gap-2">
+        <i class="fas fa-bell text-neonAmber"></i>
+        <span id="toast-message">Telemetry synchronized.</span>
+      </div>
+      <i class="fas fa-check text-emerald-400 text-xs"></i>
+    </div>
+
+  </main>
+
+  <script>
+    /* ==========================================================
+       SYNTHESIZED CYBERNETIC SOUND ENGINE (WEB AUDIO API)
+       Pure code - zero external sound files required.
+       ========================================================== */
+    class CyberSoundEngine {
+      constructor() {
+        this.enabled = true;
+        this.audioCtx = null;
+      }
+
+      initCtx() {
+        if (!this.audioCtx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) {
+            this.audioCtx = new AudioContext();
+          }
+        }
+        if (this.audioCtx && this.audioCtx.state === 'suspended') {
+          this.audioCtx.resume();
+        }
+      }
+
+      // High-tech holographic beep
+      playBeep(freq = 880, duration = 0.08, type = 'sine') {
+        if (!this.enabled) return;
+        try {
+          this.initCtx();
+          if (!this.audioCtx) return;
+
+          const osc = this.audioCtx.createOscillator();
+          const gain = this.audioCtx.createGain();
+
+          osc.type = type;
+          osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(freq * 1.5, this.audioCtx.currentTime + duration);
+
+          gain.gain.setValueAtTime(0.08, this.audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + duration);
+
+          osc.connect(gain);
+          gain.connect(this.audioCtx.destination);
+
+          osc.start();
+          osc.stop(this.audioCtx.currentTime + duration);
+        } catch (e) {
+          console.error("Audio trigger failed", e);
+        }
+      }
+
+      // Biomechanical shutter / scan sweep sound
+      playScanSound() {
+        if (!this.enabled) return;
+        try {
+          this.initCtx();
+          if (!this.audioCtx) return;
+
+          const now = this.audioCtx.currentTime;
+          const osc = this.audioCtx.createOscillator();
+          const gain = this.audioCtx.createGain();
+
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(260, now);
+          osc.frequency.linearRampToValueAtTime(940, now + 0.16);
+
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.linearRampToValueAtTime(0.001, now + 0.16);
+
+          osc.connect(gain);
+          gain.connect(this.audioCtx.destination);
+
+          osc.start();
+          osc.stop(now + 0.16);
+        } catch (e) {}
+      }
+
+      // Telephony dial chirp
+      playChirp() {
+        if (!this.enabled) return;
+        this.playBeep(1200, 0.05, 'triangle');
+        setTimeout(() => this.playBeep(1600, 0.07, 'sine'), 50);
+      }
+    }
+
+    const soundEngine = new CyberSoundEngine();
+
+    /* ==========================================================
+       DOM REFERENCES & STATE MANAGEMENT
+       ========================================================== */
+    const sfxToggleBtn = document.getElementById('sfx-toggle-btn');
+    const sfxIcon = document.getElementById('sfx-icon');
+    const sfxStatus = document.getElementById('sfx-status');
+    const shareHubBtn = document.getElementById('share-hub-btn');
+    const latencyCounter = document.getElementById('latency-counter');
+    const avatarContainer = document.getElementById('avatar-container');
+    const diagnosticTicker = document.getElementById('diagnostic-ticker');
+
+    // Modals
+    const dialerModal = document.getElementById('dialer-modal');
+    const chatModal = document.getElementById('chat-modal');
+    const hubModal = document.getElementById('hub-modal');
+
+    // Buttons
+    const hudCallBtn = document.getElementById('hud-call-btn');
+    const hudChatBtn = document.getElementById('hud-chat-btn');
+    const hudHubBtn = document.getElementById('hud-hub-btn');
+
+    const closeDialerBtn = document.getElementById('close-dialer-btn');
+    const closeChatBtn = document.getElementById('close-chat-btn');
+    const closeHubBtn = document.getElementById('close-hub-btn');
+
+    // Dial test
+    const simulatedCallBtn = document.getElementById('simulated-call-action-btn');
+    const dialerFeedback = document.getElementById('dialer-feedback');
+
+    // Chat
+    const chatInputForm = document.getElementById('chat-input-form');
+    const chatInputField = document.getElementById('chat-input-field');
+    const chatMessagesContainer = document.getElementById('chat-messages-container');
+    const quickChips = document.querySelectorAll('.quick-chip');
+
+    // Hub Calculator
+    const serviceCheckboxes = document.querySelectorAll('.service-checkbox');
+    const serviceTotalDisplay = document.getElementById('service-total-display');
+    const bookServiceBtn = document.getElementById('book-service-btn');
+
+    // Toast
+    const systemToast = document.getElementById('system-toast');
+    const toastMessage = document.getElementById('toast-message');
+
+    /* ==========================================================
+       TOAST HELPER
+       ========================================================== */
+    function showToast(text) {
+      toastMessage.textContent = text;
+      systemToast.classList.remove('hidden');
+      soundEngine.playChirp();
+      setTimeout(() => {
+        systemToast.classList.add('hidden');
+      }, 3000);
+    }
+
+    /* ==========================================================
+       STREAMING_CHUNK:Attaching event listeners and modal handlers...
+       ========================================================== */
+    // SFX Toggle
+    sfxToggleBtn.addEventListener('click', () => {
+      soundEngine.enabled = !soundEngine.enabled;
+      if (soundEngine.enabled) {
+        soundEngine.initCtx();
+        soundEngine.playBeep(950, 0.08);
+        sfxIcon.className = 'fas fa-volume-up text-[10px]';
+        sfxStatus.textContent = 'SFX: ON';
+        sfxToggleBtn.classList.add('border-cyan-400', 'text-cyan-300');
+      } else {
+        sfxIcon.className = 'fas fa-volume-mute text-[10px]';
+        sfxStatus.textContent = 'SFX: OFF';
+        sfxToggleBtn.classList.remove('border-cyan-400', 'text-cyan-300');
+      }
+    });
+
+    // Share / Copy Link Handler (Uses execCommand fallback for strict iFrame security)
+    shareHubBtn.addEventListener('click', () => {
+      soundEngine.playBeep(800, 0.05);
+      const urlToCopy = 'https://digital.nuelpropertyservices.com';
+      const tempInput = document.createElement('input');
+      tempInput.value = urlToCopy;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        showToast('Console URL Copied: digital.nuelpropertyservices.com');
+      } catch (err) {
+        showToast('Console Node: St. Cloud, MN active.');
+      }
+      document.body.removeChild(tempInput);
+    });
+
+    // Hologram Avatar Biometric Calibration Trigger
+    avatarContainer.addEventListener('click', () => {
+      soundEngine.playScanSound();
+      avatarContainer.classList.add('scale-105');
+      setTimeout(() => avatarContainer.classList.remove('scale-105'), 300);
+
+      const metrics = [
+        'BIO-AUTHENTICATED // 99.8% MATCH',
+        'SYSTEM CORE AT 100% OPERATIONAL',
+        'BANDWIDTH: 10 Gbps FIBER LINKED',
+        'IDENTITY ANCHOR: NUEL ENTERPRISE'
+      ];
+      const randomMetric = metrics[Math.floor(Math.random() * metrics.length)];
+      showToast(randomMetric);
+    });
+
+    // Randomize Simulated Ping Latency for Live Feel
+    setInterval(() => {
+      const ping = Math.floor(Math.random() * 6) + 11; // 11ms - 17ms
+      latencyCounter.textContent = ping;
+    }, 4000);
+
+    /* ==========================================================
+       MODAL CONTROLLERS (CALL, CHAT, HUB)
+       ========================================================== */
+    function openModal(modalElement) {
+      soundEngine.playBeep(700, 0.08);
+      modalElement.classList.remove('hidden');
+    }
+
+    function closeModal(modalElement) {
+      soundEngine.playBeep(450, 0.06);
+      modalElement.classList.add('hidden');
+    }
+
+    hudCallBtn.addEventListener('click', () => openModal(dialerModal));
+    closeDialerBtn.addEventListener('click', () => closeModal(dialerModal));
+
+    hudChatBtn.addEventListener('click', () => {
+      openModal(chatModal);
+      setTimeout(() => chatInputField.focus(), 150);
+    });
+    closeChatBtn.addEventListener('click', () => closeModal(chatModal));
+
+    hudHubBtn.addEventListener('click', () => openModal(hubModal));
+    closeHubBtn.addEventListener('click', () => closeModal(hubModal));
+
+    // Simulated Dispatch Call Action
+    simulatedCallBtn.addEventListener('click', () => {
+      soundEngine.playChirp();
+      dialerFeedback.textContent = "Connecting to St. Cloud Dispatch Agent...";
+      simulatedCallBtn.disabled = true;
+      setTimeout(() => {
+        soundEngine.playScanSound();
+        dialerFeedback.textContent = "Line Active: Neonuel Operator standing by (+1 320-217-3955).";
+        simulatedCallBtn.disabled = false;
+      }, 1600);
+    });
+
+    /* ==========================================================
+       STREAMING_CHUNK:Implementing automated AI chat conversation logic...
+       ========================================================== */
+    function appendChatMessage(sender, text, isUser = false) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `flex items-start gap-2 ${isUser ? 'flex-row-reverse' : ''}`;
+
+      const avatarIcon = isUser ? 'fa-user' : 'fa-robot';
+      const borderTheme = isUser ? 'border-neonOrange/50 bg-slate-900 text-neonAmber' : 'border-cyan-900/60 bg-slate-900 text-slate-200';
+      const headerColor = isUser ? 'text-neonOrange' : 'text-cyan-300';
+      const badgeBorder = isUser ? 'border-neonOrange/60 bg-orange-950 text-neonOrange' : 'border-cyan-500/50 bg-cyan-950 text-cyan-400';
+
+      msgDiv.innerHTML = `
+        <div class="w-6 h-6 rounded-full ${badgeBorder} border flex-shrink-0 flex items-center justify-center text-[10px]">
+          <i class="fas ${avatarIcon}"></i>
+        </div>
+        <div class="max-w-[85%] rounded-xl ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'} ${borderTheme} border p-2.5">
+          <p class="font-semibold ${headerColor} text-[10px] mb-0.5 font-orbitron">${sender}</p>
+          <div class="text-[11px] leading-relaxed">${text}</div>
+        </div>
+      `;
+
+      chatMessagesContainer.appendChild(msgDiv);
+      chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+    }
+
+    // Dynamic AI response generator based on keywords
+    function generateAssistantResponse(userInput) {
+      const query = userInput.toLowerCase();
+
+      if (query.includes('property') || query.includes('maintenance') || query.includes('inspect') || query.includes('turnover')) {
+        return "Nuel Property Services provides residential and commercial site maintenance, detailed digital condition documentation, and turnaround dispatch for St. Cloud, MN and surrounding networks. Tap the **PROPERTY HUB** button to view line items.";
+      } else if (query.includes('setup') || query.includes('it') || query.includes('tech') || query.includes('digital') || query.includes('asset')) {
+        return "Our digital asset team configures custom mobile cyber-HUDs, smart locks, local server hardware, and automated customer onboarding workflows. Direct file requests can be routed to **nueldigitalassets@gmail.com**.";
+      } else if (query.includes('call') || query.includes('phone') || query.includes('number') || query.includes('reach') || query.includes('st. cloud')) {
+        return "You can call our primary St. Cloud hub line directly at **+1 (320) 217-3955**, or use the CALL button on your HUD console.";
+      } else if (query.includes('price') || query.includes('cost') || query.includes('quote') || query.includes('rate')) {
+        return "Core IT and setup services start at $149, while comprehensive property inspections and maintenance start at $199. Custom digital ecosystem packages are scoped on demand.";
+      } else {
+        return `Instruction received: "${userInput}". Neonuel Human OS agent has logged your telemetry. For immediate service dispatch, call +1 320-217-3955 or tap the Property Hub tab.`;
+      }
+    }
+
+    // Handle Form Submit
+    chatInputForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const text = chatInputField.value.trim();
+      if (!text) return;
+
+      soundEngine.playBeep(900, 0.04);
+      appendChatMessage('OPERATOR', text, true);
+      chatInputField.value = '';
+
+      // Typing indicator simulation
+      setTimeout(() => {
+        soundEngine.playScanSound();
+        const response = generateAssistantResponse(text);
+        appendChatMessage('NEONUEL OS', response, false);
+      }, 700);
+    });
+
+    // Quick Chips click handlers
+    quickChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        const text = chip.textContent.trim();
+        chatInputField.value = text;
+        chatInputForm.dispatchEvent(new Event('submit'));
+      });
+    });
+
+    /* ==========================================================
+       PROPERTY SERVICES HUB CALCULATOR LOGIC
+       ========================================================== */
+    function updateServiceTotal() {
+      let total = 0;
+      serviceCheckboxes.forEach(cb => {
+        if (cb.checked) {
+          total += parseInt(cb.dataset.price, 10);
+        }
+      });
+      serviceTotalDisplay.textContent = `$${total}.00`;
+    }
+
+    serviceCheckboxes.forEach(cb => {
+      cb.addEventListener('change', () => {
+        soundEngine.playBeep(650, 0.05);
+        updateServiceTotal();
+      });
+    });
+
+    bookServiceBtn.addEventListener('click', () => {
+      soundEngine.playChirp();
+      const selected = Array.from(serviceCheckboxes)
+        .filter(c => c.checked)
+        .map(c => c.dataset.name);
+      
+      if (selected.length === 0) {
+        showToast("Please select at least 1 service module.");
+        return;
+      }
+
+      closeModal(hubModal);
+      openModal(chatModal);
+      appendChatMessage('OPERATOR', `I would like to dispatch an inquiry for: ${selected.join(', ')}.`, true);
+      setTimeout(() => {
+        soundEngine.playScanSound();
+        appendChatMessage('NEONUEL OS', `Dispatch request initiated for ${selected.length} service modules (${serviceTotalDisplay.textContent}). Please provide your preferred property address or contact +1 320-217-3955 to confirm immediate slot.`, false);
+      }, 600);
+    });
+
+    window.onload = function() {
+      updateServiceTotal();
+      // Brief chime on load if interaction permits
+      setTimeout(() => {
+        soundEngine.playBeep(520, 0.06);
+      }, 200);
+    };
+  </script>
+</body>
+</html>

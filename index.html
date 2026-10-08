@@ -515,12 +515,10 @@
       </div>
 
       <!-- Message Input Form -->
-      <form id="chat-input-form" class="flex items-center gap-2 pt-1 border-t border-slate-800">
-        <input id="chat-input-field" type="text" placeholder="Transmit instruction or inquiry..." class="flex-1 bg-slate-900/90 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-400 font-chakra">
-        <button type="submit" class="w-9 h-9 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 flex items-center justify-center transition active:scale-90 shadow-cyan-glow">
-          <i class="fas fa-paper-plane text-xs"></i>
-        </button>
-      </form>
+      <form action="https://api.web3forms.com/submit" method="POST" id="propertyHubForm">
+  <input type="hidden" name="access_key" value="9f2932c2-fcea-46fe-9f27-16421d869ff6">
+  <input type="hidden" name="subject" value="New Property Hub Service Request">
+  <input type="hidden" name="from_name" value="Neonuel Property Hub">
     </div>
 
     <!-- MODAL 3: PROPERTY SERVICES HUB & QUOTE CALCULATOR -->

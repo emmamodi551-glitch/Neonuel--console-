@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>NEONUEL: THE HUMAN OS - ALWAYS-ON IDENTITY</title>
+  
+  <!-- PWA Meta & Manifest -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#ff7a18">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NEONUEL OS">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -39,7 +47,6 @@
   </script>
 
   <style>
-    /* Full-Screen Carbon Weave Background */
     body {
       background-color: #0b0e14;
       background-image: 
@@ -118,7 +125,7 @@
   <div class="fixed inset-0 scanlines z-10 pointer-events-none opacity-30"></div>
   <div class="fixed inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent hud-scanner-bar z-10 pointer-events-none"></div>
 
-  <!-- FLOATING AUDIO CONTROLS (Top-Right) -->
+  <!-- FLOATING CONTROLS (Top-Right) -->
   <div class="fixed top-3 right-4 z-40 flex items-center space-x-2">
     <button id="sfx-toggle-btn" class="px-2.5 py-1 rounded border border-cyan-500/40 bg-slate-900/90 backdrop-blur text-cyan-400 text-xs font-chakra flex items-center gap-1.5 hover:border-cyan-400 hover:text-cyan-300 transition shadow-sm active:scale-95 cursor-pointer">
       <i id="sfx-icon" class="fas fa-volume-up text-[10px]"></i>
@@ -129,7 +136,7 @@
     </button>
   </div>
 
-  <!-- TOP HEADER (Full Width, Centered Max-Width) -->
+  <!-- TOP HEADER -->
   <header class="relative z-20 w-full pt-4 px-4 sm:px-8 pb-3 border-b border-cyan-900/40 bg-gradient-to-b from-slate-950 via-slate-950/90 to-transparent backdrop-blur-md">
     <div class="max-w-6xl mx-auto">
       <div class="flex items-center justify-between">
@@ -158,12 +165,11 @@
     </div>
   </header>
 
-  <!-- MAIN HUD WORKSPACE (Full Screen on Laptop, Clean Stack on Mobile) -->
+  <!-- MAIN HUD WORKSPACE -->
   <main class="relative z-20 flex-1 w-full max-w-6xl mx-auto px-4 sm:px-8 py-6 flex flex-col justify-center">
-    
     <div class="grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-12 w-full my-auto">
       
-      <!-- LEFT COLUMN: Hologram Display & Sensor Readouts -->
+      <!-- LEFT COLUMN: Hologram Display -->
       <section class="flex flex-col items-center justify-center w-full">
         <div class="relative flex items-center justify-center w-64 h-64 sm:w-80 sm:h-80">
           <div class="absolute inset-0 rounded-full border border-cyan-500/20 pointer-events-none flex items-center justify-center">
@@ -252,7 +258,7 @@
         </div>
       </section>
 
-      <!-- RIGHT COLUMN: Industrial Branding Plaque & Enterprise Links -->
+      <!-- RIGHT COLUMN: Industrial Branding Plaque -->
       <section class="w-full max-w-md mx-auto">
         <div class="relative steel-bezel rounded-2xl p-0.5 shadow-2xl">
           <div class="absolute top-2 left-2 rivet"></div>
@@ -283,7 +289,6 @@
               <div class="h-[1px] flex-1 bg-gradient-to-l from-transparent via-slate-600 to-neonOrange"></div>
             </div>
 
-            <!-- Clickable Directory Points -->
             <div class="w-full space-y-2 text-xs sm:text-sm font-chakra">
               <a href="tel:+13202173955" class="group flex items-center justify-center gap-2 text-slate-300 hover:text-neonOrange transition py-1">
                 <span class="w-6 h-6 rounded bg-slate-900 border border-slate-700 flex items-center justify-center text-neonOrange text-xs group-hover:border-neonOrange transition">
@@ -315,7 +320,7 @@
 
     </div>
 
-    <!-- ACTION HUD CONTROLS (Centered 3-Button Console) -->
+    <!-- ACTION HUD CONTROLS -->
     <div class="w-full max-w-sm mx-auto flex items-center justify-around pt-6 pb-2">
       <!-- BUTTON 1: CALL -->
       <div class="flex flex-col items-center">
@@ -351,10 +356,9 @@
         <span class="font-orbitron text-[10px] font-bold text-slate-300 tracking-wider mt-1.5 text-center leading-tight">PROPERTY<br>HUB</span>
       </div>
     </div>
-
   </main>
 
-  <!-- BOTTOM FOOTER PLATE (Stretches Edge-to-Edge with Guaranteed Text Visibility) -->
+  <!-- BOTTOM FOOTER -->
   <footer class="relative z-30 w-full brushed-metal border-t border-slate-500/50 py-3.5 px-6 sm:px-12 shadow-[0_-10px_25px_rgba(0,0,0,0.85)] mt-auto">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <div class="rivet"></div>
@@ -440,7 +444,6 @@
         </button>
       </div>
 
-      <!-- Messages Stream -->
       <div id="chat-messages-container" class="flex-1 overflow-y-auto my-3 space-y-3 pr-1 text-xs font-chakra">
         <div class="flex items-start gap-2">
           <div class="w-6 h-6 rounded-full bg-cyan-950 border border-cyan-500/50 flex-shrink-0 flex items-center justify-center text-cyan-400 text-[10px]">
@@ -453,7 +456,6 @@
         </div>
       </div>
 
-      <!-- Quick Action Chips -->
       <div class="flex gap-2 overflow-x-auto py-2 px-1 text-[11px] font-mono border-t border-slate-800">
         <button type="button" class="quick-chip whitespace-nowrap bg-cyan-950/70 border border-cyan-800 text-cyan-300 px-2.5 py-1 rounded hover:bg-cyan-900 transition-all cursor-pointer">
           Property Care Scope
@@ -466,7 +468,6 @@
         </button>
       </div>
 
-      <!-- Chat Form -->
       <form id="chat-input-form" class="p-2 bg-slate-900/90 border-t border-slate-800 flex gap-2 rounded-b-xl">
         <input type="text" id="chat-input-field" placeholder="Enter diagnostic query..." class="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-2 text-xs font-mono text-slate-100 focus:outline-none focus:border-cyan-400">
         <button type="submit" class="bg-cyan-500 hover:bg-cyan-400 text-black px-4 py-2 rounded text-xs font-mono font-bold uppercase transition-all cursor-pointer">Send</button>
@@ -544,7 +545,6 @@
           </div>
         </div>
 
-        <!-- Dispatch Form (Web3Forms Asynchronous Delivery) -->
         <form id="propertyHubForm" class="space-y-3 pt-2">
           <div id="formStatusMsg" class="hidden p-2.5 rounded font-mono text-xs border text-center transition-all"></div>
 
@@ -597,8 +597,22 @@
     <i class="fas fa-check text-emerald-400 text-xs"></i>
   </div>
 
-  <!-- JS ENGINE -->
+  <!-- SCRIPT ENGINE: SYNTHESIS, PWA, SUPABASE DUAL-STORAGE -->
   <script>
+    /* ==========================================================
+       PWA SERVICE WORKER REGISTRATION
+       ========================================================== */
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("/sw.js").catch((err) => {
+          console.log("ServiceWorker registration optional:", err);
+        });
+      });
+    }
+
+    /* ==========================================================
+       ADVANCED SYNTHESIZED AUDIO SOUND ENGINE
+       ========================================================== */
     class CyberSoundEngine {
       constructor() {
         this.enabled = true;
@@ -615,54 +629,102 @@
         }
       }
 
-      playBeep(freq = 880, duration = 0.08, type = 'sine') {
+      playOpen() {
         if (!this.enabled) return;
-        try {
-          this.initCtx();
-          if (!this.audioCtx) return;
+        this.initCtx();
+        if (!this.audioCtx) return;
+        const now = this.audioCtx.currentTime;
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(440, now);
+        osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+        gain.gain.setValueAtTime(0.07, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.12);
+      }
+
+      playClose() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.audioCtx) return;
+        const now = this.audioCtx.currentTime;
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(660, now);
+        osc.frequency.exponentialRampToValueAtTime(320, now + 0.1);
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.1);
+      }
+
+      playClick() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.audioCtx) return;
+        const now = this.audioCtx.currentTime;
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(1200, now);
+        gain.gain.setValueAtTime(0.04, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.04);
+      }
+
+      playSuccess() {
+        if (!this.enabled) return;
+        this.initCtx();
+        if (!this.audioCtx) return;
+        const now = this.audioCtx.currentTime;
+        [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
           const osc = this.audioCtx.createOscillator();
           const gain = this.audioCtx.createGain();
-          osc.type = type;
-          osc.frequency.setValueAtTime(freq, this.audioCtx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(freq * 1.5, this.audioCtx.currentTime + duration);
-          gain.gain.setValueAtTime(0.08, this.audioCtx.currentTime);
-          gain.gain.exponentialRampToValueAtTime(0.001, this.audioCtx.currentTime + duration);
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(freq, now + i * 0.07);
+          gain.gain.setValueAtTime(0.06, now + i * 0.07);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.12);
           osc.connect(gain);
           gain.connect(this.audioCtx.destination);
-          osc.start();
-          osc.stop(this.audioCtx.currentTime + duration);
-        } catch (e) {}
+          osc.start(now + i * 0.07);
+          osc.stop(now + i * 0.07 + 0.12);
+        });
       }
 
       playScanSound() {
         if (!this.enabled) return;
-        try {
-          this.initCtx();
-          if (!this.audioCtx) return;
-          const now = this.audioCtx.currentTime;
-          const osc = this.audioCtx.createOscillator();
-          const gain = this.audioCtx.createGain();
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(260, now);
-          osc.frequency.linearRampToValueAtTime(940, now + 0.16);
-          gain.gain.setValueAtTime(0.05, now);
-          gain.gain.linearRampToValueAtTime(0.001, now + 0.16);
-          osc.connect(gain);
-          gain.connect(this.audioCtx.destination);
-          osc.start();
-          osc.stop(now + 0.16);
-        } catch (e) {}
-      }
-
-      playChirp() {
-        if (!this.enabled) return;
-        this.playBeep(1200, 0.05, 'triangle');
-        setTimeout(() => this.playBeep(1600, 0.07, 'sine'), 50);
+        this.initCtx();
+        if (!this.audioCtx) return;
+        const now = this.audioCtx.currentTime;
+        const osc = this.audioCtx.createOscillator();
+        const gain = this.audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(260, now);
+        osc.frequency.linearRampToValueAtTime(940, now + 0.16);
+        gain.gain.setValueAtTime(0.05, now);
+        gain.gain.linearRampToValueAtTime(0.001, now + 0.16);
+        osc.connect(gain);
+        gain.connect(this.audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.16);
       }
     }
 
     const soundEngine = new CyberSoundEngine();
 
+    /* ==========================================================
+       DOM ELEMENTS & CONTROLS
+       ========================================================== */
     const sfxToggleBtn = document.getElementById('sfx-toggle-btn');
     const sfxIcon = document.getElementById('sfx-icon');
     const sfxStatus = document.getElementById('sfx-status');
@@ -698,7 +760,7 @@
     function showToast(text) {
       toastMessage.textContent = text;
       systemToast.classList.remove('hidden');
-      soundEngine.playChirp();
+      soundEngine.playSuccess();
       setTimeout(() => systemToast.classList.add('hidden'), 3000);
     }
 
@@ -706,7 +768,7 @@
       soundEngine.enabled = !soundEngine.enabled;
       if (soundEngine.enabled) {
         soundEngine.initCtx();
-        soundEngine.playBeep(950, 0.08);
+        soundEngine.playOpen();
         sfxIcon.className = 'fas fa-volume-up text-[10px]';
         sfxStatus.textContent = 'SFX: ON';
         sfxToggleBtn.classList.add('border-cyan-400', 'text-cyan-300');
@@ -718,8 +780,8 @@
     });
 
     shareHubBtn.addEventListener('click', () => {
-      soundEngine.playBeep(800, 0.05);
-      navigator.clipboard?.writeText('https://digital.nuelpropertyservices.com')
+      soundEngine.playClick();
+      navigator.clipboard?.writeText('https://os.nuelpropertyservices.com')
         .then(() => showToast('Console URL Copied'))
         .catch(() => showToast('Console Node: St. Cloud, MN active.'));
     });
@@ -734,12 +796,12 @@
     }, 4000);
 
     function openModal(el) {
-      soundEngine.playBeep(700, 0.08);
+      soundEngine.playOpen();
       el.classList.remove('hidden');
     }
 
     function closeModal(el) {
-      soundEngine.playBeep(450, 0.06);
+      soundEngine.playClose();
       el.classList.add('hidden');
     }
 
@@ -756,7 +818,7 @@
     closeHubBtn.addEventListener('click', () => closeModal(hubModal));
 
     simulatedCallBtn.addEventListener('click', () => {
-      soundEngine.playChirp();
+      soundEngine.playClick();
       dialerFeedback.textContent = "Connecting to St. Cloud Dispatch Agent...";
       simulatedCallBtn.disabled = true;
       setTimeout(() => {
@@ -766,6 +828,9 @@
       }, 1600);
     });
 
+    /* ==========================================================
+       CHAT KNOWLEDGE MATRIX & HANDLERS
+       ========================================================== */
     const neonuelKnowledge = [
       {
         queryMatch: ["property", "maintenance", "facility", "care", "quote", "scope"],
@@ -818,7 +883,7 @@
       e.preventDefault();
       const text = chatInputField.value.trim();
       if (!text) return;
-      soundEngine.playBeep(900, 0.04);
+      soundEngine.playClick();
       appendChatMessage('OPERATOR', text, true);
       chatInputField.value = '';
       setTimeout(() => {
@@ -830,6 +895,7 @@
 
     document.querySelectorAll('.quick-chip').forEach(chip => {
       chip.addEventListener('click', () => {
+        soundEngine.playClick();
         const text = chip.innerText.trim();
         appendChatMessage('OPERATOR', text, true);
         setTimeout(() => {
@@ -849,9 +915,18 @@
     }
 
     serviceCheckboxes.forEach(cb => cb.addEventListener('change', () => {
-      soundEngine.playBeep(650, 0.05);
+      soundEngine.playClick();
       updateServiceTotal();
     }));
+
+    /* ==========================================================
+       PROPERTY HUB: ASYNC WEB3FORMS & SUPABASE MIRRORING
+       ========================================================== */
+    // Optional: Add your Supabase project URL & Anon Key below to mirror leads into a database table
+    const SUPABASE_CONFIG = {
+      url: "",      // e.g. "https://xyzcompany.supabase.co"
+      anonKey: ""  // e.g. "eyJhbGciOi..."
+    };
 
     const propForm = document.getElementById("propertyHubForm");
     const statusBox = document.getElementById("formStatusMsg");
@@ -859,6 +934,8 @@
 
     propForm.addEventListener("submit", async (e) => {
       e.preventDefault();
+      soundEngine.playClick();
+
       submitBtn.disabled = true;
       submitBtn.innerText = "TRANSMITTING TO DISPATCH...";
       submitBtn.classList.add("opacity-50", "cursor-not-allowed");
@@ -883,6 +960,7 @@
       };
 
       try {
+        // 1. Email notification via Web3Forms
         const response = await fetch("https://api.web3forms.com/submit", {
           method: "POST",
           headers: {
@@ -893,7 +971,34 @@
         });
 
         const result = await response.json();
+
+        // 2. Mirror into Supabase (if configured)
+        if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
+          try {
+            await fetch(`${SUPABASE_CONFIG.url}/rest/v1/property_dispatches`, {
+              method: "POST",
+              headers: {
+                "apikey": SUPABASE_CONFIG.anonKey,
+                "Authorization": `Bearer ${SUPABASE_CONFIG.anonKey}`,
+                "Content-Type": "application/json",
+                "Prefer": "return=minimal"
+              },
+              body: JSON.stringify({
+                client_name: payload.client_name,
+                phone_number: payload.phone_number,
+                email_address: payload.email_address,
+                services_requested: payload.services_requested,
+                estimated_total: payload.estimated_total,
+                dispatch_scope: payload.dispatch_scope
+              })
+            });
+          } catch (dbErr) {
+            console.warn("Supabase dual-sync skipped:", dbErr);
+          }
+        }
+
         if (response.status === 200 && result.success) {
+          soundEngine.playSuccess();
           statusBox.className = "p-2.5 rounded font-mono text-xs border text-center transition-all bg-emerald-500/10 border-emerald-500/40 text-emerald-300 block";
           statusBox.innerText = "✔ DISPATCH LOGGED. Team notified at nueldigitalassets@gmail.com";
           propForm.reset();
@@ -902,6 +1007,7 @@
           throw new Error(result.message || "Failed to submit request.");
         }
       } catch (err) {
+        soundEngine.playClose();
         statusBox.className = "p-2.5 rounded font-mono text-xs border text-center transition-all bg-rose-500/10 border-rose-500/40 text-rose-300 block";
         statusBox.innerText = `✖ TRANSMISSION ERROR: ${err.message}`;
       } finally {
@@ -913,7 +1019,7 @@
 
     window.onload = function() {
       updateServiceTotal();
-      setTimeout(() => soundEngine.playBeep(520, 0.06), 200);
+      setTimeout(() => soundEngine.playClick(), 200);
     };
   </script>
 </body>

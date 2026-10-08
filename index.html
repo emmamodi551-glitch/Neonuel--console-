@@ -515,11 +515,61 @@
       </div>
 
       <!-- Message Input Form -->
-      <form action="https://api.web3forms.com/submit" method="POST" id="propertyHubForm" class="space-y-4">
-  <!-- Web3Forms Config -->
-  <input type="hidden" name="access_key" value="9f2932c2-fcea-46fe-9f27-16421d869ff6">
-  <input type="hidden" name="subject" value="New Property Hub Service Request">
-  <input type="hidden" name="from_name" value="Neonuel Property Hub">
+      <form id="propertyHubForm" class="space-y-4">
+  <!-- Dynamic Status Alert Box -->
+  <div id="formStatusMsg" class="hidden p-3 rounded font-mono text-xs border text-center transition-all"></div>
+
+  <!-- Client Details -->
+  <div>
+    <label class="block text-[10px] uppercase tracking-wider text-cyan-400 mb-1 font-mono">Client / Company Name</label>
+    <input type="text" id="propName" name="client_name" placeholder="Enter name" required 
+           class="w-full bg-slate-900/90 border border-slate-700 rounded p-2.5 text-xs text-slate-100 focus:border-amber-500 focus:outline-none font-mono">
+  </div>
+
+  <div>
+    <label class="block text-[10px] uppercase tracking-wider text-cyan-400 mb-1 font-mono">Direct Phone / Callback</label>
+    <input type="tel" id="propPhone" name="phone_number" placeholder="Enter phone" required 
+           class="w-full bg-slate-900/90 border border-slate-700 rounded p-2.5 text-xs text-slate-100 focus:border-amber-500 focus:outline-none font-mono">
+  </div>
+
+  <div>
+    <label class="block text-[10px] uppercase tracking-wider text-cyan-400 mb-1 font-mono">Email Address</label>
+    <input type="email" id="propEmail" name="email_address" placeholder="Enter email" required 
+           class="w-full bg-slate-900/90 border border-slate-700 rounded p-2.5 text-xs text-slate-100 focus:border-amber-500 focus:outline-none font-mono">
+  </div>
+
+  <!-- Service Selection -->
+  <div>
+    <label class="block text-[10px] uppercase tracking-wider text-cyan-400 mb-2 font-mono">Operations Selection</label>
+    <div class="space-y-2">
+      <label class="flex items-center space-x-2 text-xs text-slate-300 font-mono cursor-pointer">
+        <input type="checkbox" name="services_requested[]" value="Facility Site Care" class="accent-amber-500">
+        <span>Facility & Ground Care</span>
+      </label>
+      <label class="flex items-center space-x-2 text-xs text-slate-300 font-mono cursor-pointer">
+        <input type="checkbox" name="services_requested[]" value="Rapid Property Maintenance" class="accent-amber-500">
+        <span>Rapid Property Maintenance</span>
+      </label>
+      <label class="flex items-center space-x-2 text-xs text-slate-300 font-mono cursor-pointer">
+        <input type="checkbox" name="services_requested[]" value="Digital Infrastructure / IT" class="accent-amber-500">
+        <span>Digital Infrastructure / IT</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Dispatch Scope -->
+  <div>
+    <label class="block text-[10px] uppercase tracking-wider text-cyan-400 mb-1 font-mono">Scope Details</label>
+    <textarea id="propScope" name="dispatch_scope" rows="3" placeholder="Describe property requirements..." 
+              class="w-full bg-slate-900/90 border border-slate-700 rounded p-2.5 text-xs text-slate-100 focus:border-amber-500 focus:outline-none font-mono"></textarea>
+  </div>
+
+  <!-- Submit Button -->
+  <button type="submit" id="propSubmitBtn"
+          class="w-full py-3 bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-500 hover:to-orange-500 text-black font-bold uppercase tracking-wider text-xs rounded transition-all shadow-lg font-mono">
+    Transmit Service Dispatch
+  </button>
+</form>
 
   <!-- Client Details -->
   <div>

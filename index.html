@@ -4,8 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>NEONUEL: THE HUMAN OS - ALWAYS-ON IDENTITY</title>
-  
-  <!-- PWA Meta & Manifest -->
+
+  <!-- Open Graph & Twitter SEO Meta Tags -->
+  <meta name="description" content="Always-On Identity Architecture & Operations Console for Nuel Property Services and Nuel Digital Assets.">
+  <meta property="og:title" content="NEONUEL: THE HUMAN OS">
+  <meta property="og:description" content="Commercial facility care, IT network provisioning, and digital operations console in St. Cloud, MN.">
+  <meta property="og:image" content="https://img.icons8.com/neon/512/bot.png">
+  <meta property="og:url" content="https://os.nuelpropertyservices.com">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="NEONUEL: THE HUMAN OS">
+  <meta name="twitter:description" content="Operations Console & Always-On Identity for Nuel Business Groups.">
+  <meta name="twitter:image" content="https://img.icons8.com/neon/512/bot.png">
+
+  <!-- PWA Manifest & App Config -->
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#ff7a18">
   <meta name="mobile-web-app-capable" content="yes">
@@ -127,6 +139,10 @@
 
   <!-- FLOATING CONTROLS (Top-Right) -->
   <div class="fixed top-3 right-4 z-40 flex items-center space-x-2">
+    <!-- Hidden Admin Panel Access Key (Terminal Icon) -->
+    <button id="admin-toggle-btn" class="w-8 h-8 rounded border border-slate-700 bg-slate-900/90 text-slate-400 hover:text-cyan-400 hover:border-cyan-400 transition flex items-center justify-center text-xs active:scale-95" title="Admin Telemetry Console">
+      <i class="fas fa-terminal"></i>
+    </button>
     <button id="sfx-toggle-btn" class="px-2.5 py-1 rounded border border-cyan-500/40 bg-slate-900/90 backdrop-blur text-cyan-400 text-xs font-chakra flex items-center gap-1.5 hover:border-cyan-400 hover:text-cyan-300 transition shadow-sm active:scale-95 cursor-pointer">
       <i id="sfx-icon" class="fas fa-volume-up text-[10px]"></i>
       <span id="sfx-status">SFX: ON</span>
@@ -146,7 +162,7 @@
           <span class="text-slate-600">|</span>
           <span class="font-chakra text-[10px] sm:text-xs text-cyan-400 font-mono tracking-wider">LATENCY: <span id="latency-counter">14</span>ms</span>
         </div>
-        <div class="pr-24 flex items-center space-x-3 text-[11px] font-chakra text-slate-400">
+        <div class="pr-28 flex items-center space-x-3 text-[11px] font-chakra text-slate-400">
           <span class="hidden sm:inline"><i class="fas fa-wifi text-cyan-400 mr-1"></i>NODE: ST. CLOUD, MN</span>
           <span>CORE: <span class="text-neonAmber font-bold">100%</span></span>
           <i class="fas fa-battery-three-quarters text-emerald-400"></i>
@@ -362,7 +378,6 @@
   <footer class="relative z-30 w-full brushed-metal border-t border-slate-500/50 py-3.5 px-6 sm:px-12 shadow-[0_-10px_25px_rgba(0,0,0,0.85)] mt-auto">
     <div class="max-w-6xl mx-auto flex items-center justify-between">
       <div class="rivet"></div>
-      
       <div class="flex flex-col items-center justify-center">
         <div class="flex items-center gap-2">
           <span class="text-neonOrange text-sm font-black tracking-tighter">|||</span>
@@ -378,7 +393,6 @@
           <span class="text-cyan-400">CENTRAL MN</span>
         </div>
       </div>
-
       <div class="rivet"></div>
     </div>
   </footer>
@@ -588,6 +602,53 @@
     </div>
   </div>
 
+  <!-- MODAL 4: PRIVATE ADMIN TELEMETRY DRAWER -->
+  <div id="admin-modal" class="hidden fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+    <div class="w-full max-w-2xl max-h-[85vh] bg-slate-950 border border-cyan-500/60 rounded-2xl p-5 shadow-2xl flex flex-col justify-between overflow-hidden">
+      
+      <!-- Admin Header -->
+      <div class="flex items-center justify-between border-b border-cyan-900/60 pb-3">
+        <div class="flex items-center gap-2">
+          <i class="fas fa-terminal text-cyan-400"></i>
+          <div>
+            <h3 class="font-orbitron font-bold text-sm text-cyan-300 tracking-wider">COMMAND TELEMETRY // ADMIN ACCESS</h3>
+            <p class="font-chakra text-[10px] text-slate-400">Secure Dispatch Log & Activity Monitor</p>
+          </div>
+        </div>
+        <button id="close-admin-btn" class="w-7 h-7 rounded-full bg-slate-900 border border-slate-700 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer">
+          <i class="fas fa-times text-xs"></i>
+        </button>
+      </div>
+
+      <!-- Passkey Gate (Visible initially) -->
+      <div id="admin-gate-section" class="my-auto py-8 text-center space-y-4 max-w-xs mx-auto">
+        <i class="fas fa-fingerprint text-4xl text-neonOrange animate-pulse"></i>
+        <p class="font-chakra text-xs text-slate-300">ENTER 4-DIGIT SECURITY PASSKEY</p>
+        <input type="password" id="admin-pass-input" maxlength="8" placeholder="••••" class="w-full text-center bg-slate-900 border border-slate-700 rounded py-2 px-3 font-mono text-sm tracking-widest text-cyan-300 focus:outline-none focus:border-cyan-400">
+        <button id="admin-unlock-btn" class="w-full py-2 bg-cyan-600 hover:bg-cyan-500 text-black font-bold font-mono text-xs uppercase rounded transition">Authenticate</button>
+        <p id="admin-auth-err" class="text-rose-400 text-[10px] font-mono hidden">Access Denied. Invalid Keycode.</p>
+      </div>
+
+      <!-- Feed Container (Hidden until unlocked) -->
+      <div id="admin-feed-section" class="hidden flex-1 overflow-y-auto my-3 space-y-3 font-mono text-xs pr-1">
+        <div class="flex items-center justify-between p-2 bg-slate-900 rounded border border-slate-800 text-[10px]">
+          <span class="text-slate-400">Live Dispatches Captured: <span id="lead-count" class="text-cyan-400 font-bold">0</span></span>
+          <button id="refresh-leads-btn" class="text-cyan-400 hover:underline flex items-center gap-1"><i class="fas fa-rotate"></i> Refresh</button>
+        </div>
+        <div id="dispatches-list" class="space-y-2">
+          <!-- Dispatches dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Admin Footer Actions -->
+      <div id="admin-footer-actions" class="hidden border-t border-slate-800 pt-2 flex items-center justify-between text-[11px] font-mono text-slate-400">
+        <span class="text-[10px] text-emerald-400"><i class="fas fa-circle-check mr-1"></i>TERMINAL ROOT SECURED</span>
+        <button id="admin-lock-btn" class="text-rose-400 hover:underline text-[10px]">Lock Console</button>
+      </div>
+
+    </div>
+  </div>
+
   <!-- TOAST FEEDBACK -->
   <div id="system-toast" class="hidden fixed top-16 inset-x-6 z-50 p-2.5 rounded-xl bg-slate-900/95 border border-neonOrange text-slate-100 text-xs font-chakra flex items-center justify-between shadow-orange-glow transition-all max-w-sm mx-auto">
     <div class="flex items-center gap-2">
@@ -597,22 +658,16 @@
     <i class="fas fa-check text-emerald-400 text-xs"></i>
   </div>
 
-  <!-- SCRIPT ENGINE: SYNTHESIS, PWA, SUPABASE DUAL-STORAGE -->
+  <!-- SCRIPT ENGINE -->
   <script>
-    /* ==========================================================
-       PWA SERVICE WORKER REGISTRATION
-       ========================================================== */
+    /* PWA SERVICE WORKER */
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/sw.js").catch((err) => {
-          console.log("ServiceWorker registration optional:", err);
-        });
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
       });
     }
 
-    /* ==========================================================
-       ADVANCED SYNTHESIZED AUDIO SOUND ENGINE
-       ========================================================== */
+    /* SYNTHESIZED SOUND ENGINE */
     class CyberSoundEngine {
       constructor() {
         this.enabled = true;
@@ -722,9 +777,7 @@
 
     const soundEngine = new CyberSoundEngine();
 
-    /* ==========================================================
-       DOM ELEMENTS & CONTROLS
-       ========================================================== */
+    /* DOM REFS */
     const sfxToggleBtn = document.getElementById('sfx-toggle-btn');
     const sfxIcon = document.getElementById('sfx-icon');
     const sfxStatus = document.getElementById('sfx-status');
@@ -735,14 +788,17 @@
     const dialerModal = document.getElementById('dialer-modal');
     const chatModal = document.getElementById('chat-modal');
     const hubModal = document.getElementById('hub-modal');
+    const adminModal = document.getElementById('admin-modal');
 
     const hudCallBtn = document.getElementById('hud-call-btn');
     const hudChatBtn = document.getElementById('hud-chat-btn');
     const hudHubBtn = document.getElementById('hud-hub-btn');
+    const adminToggleBtn = document.getElementById('admin-toggle-btn');
 
     const closeDialerBtn = document.getElementById('close-dialer-btn');
     const closeChatBtn = document.getElementById('close-chat-btn');
     const closeHubBtn = document.getElementById('close-hub-btn');
+    const closeAdminBtn = document.getElementById('close-admin-btn');
 
     const simulatedCallBtn = document.getElementById('simulated-call-action-btn');
     const dialerFeedback = document.getElementById('dialer-feedback');
@@ -817,6 +873,9 @@
     hudHubBtn.addEventListener('click', () => openModal(hubModal));
     closeHubBtn.addEventListener('click', () => closeModal(hubModal));
 
+    adminToggleBtn.addEventListener('click', () => openModal(adminModal));
+    closeAdminBtn.addEventListener('click', () => closeModal(adminModal));
+
     simulatedCallBtn.addEventListener('click', () => {
       soundEngine.playClick();
       dialerFeedback.textContent = "Connecting to St. Cloud Dispatch Agent...";
@@ -828,9 +887,7 @@
       }, 1600);
     });
 
-    /* ==========================================================
-       CHAT KNOWLEDGE MATRIX & HANDLERS
-       ========================================================== */
+    /* CHAT KNOWLEDGE MATRIX */
     const neonuelKnowledge = [
       {
         queryMatch: ["property", "maintenance", "facility", "care", "quote", "scope"],
@@ -920,11 +977,11 @@
     }));
 
     /* ==========================================================
-       PROPERTY HUB: ASYNC WEB3FORMS & SUPABASE MIRRORING
+       SUPABASE CONFIGURATION & DUAL STORAGE
+       Paste your credentials here to activate database sync!
        ========================================================== */
-    // Optional: Add your Supabase project URL & Anon Key below to mirror leads into a database table
     const SUPABASE_CONFIG = {
-      url: "",      // e.g. "https://xyzcompany.supabase.co"
+      url: "",      // e.g. "https://xxxx.supabase.co"
       anonKey: ""  // e.g. "eyJhbGciOi..."
     };
 
@@ -972,7 +1029,7 @@
 
         const result = await response.json();
 
-        // 2. Mirror into Supabase (if configured)
+        // 2. Dual Sync to Supabase
         if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
           try {
             await fetch(`${SUPABASE_CONFIG.url}/rest/v1/property_dispatches`, {
@@ -997,6 +1054,14 @@
           }
         }
 
+        // 3. Fallback: Local Cache for Admin Drawer preview
+        const localLeads = JSON.parse(localStorage.getItem("neonuel_dispatches") || "[]");
+        localLeads.unshift({
+          ...payload,
+          created_at: new Date().toISOString()
+        });
+        localStorage.setItem("neonuel_dispatches", JSON.stringify(localLeads.slice(0, 30)));
+
         if (response.status === 200 && result.success) {
           soundEngine.playSuccess();
           statusBox.className = "p-2.5 rounded font-mono text-xs border text-center transition-all bg-emerald-500/10 border-emerald-500/40 text-emerald-300 block";
@@ -1015,6 +1080,97 @@
         submitBtn.innerText = "TRANSMIT SERVICE DISPATCH";
         submitBtn.classList.remove("opacity-50", "cursor-not-allowed");
       }
+    });
+
+    /* ==========================================================
+       ADMIN TELEMETRY LOGIC (Passkey: 3955)
+       ========================================================== */
+    const adminPassInput = document.getElementById("admin-pass-input");
+    const adminUnlockBtn = document.getElementById("admin-unlock-btn");
+    const adminGateSection = document.getElementById("admin-gate-section");
+    const adminFeedSection = document.getElementById("admin-feed-section");
+    const adminFooterActions = document.getElementById("admin-footer-actions");
+    const adminAuthErr = document.getElementById("admin-auth-err");
+    const adminLockBtn = document.getElementById("admin-lock-btn");
+    const refreshLeadsBtn = document.getElementById("refresh-leads-btn");
+    const dispatchesList = document.getElementById("dispatches-list");
+    const leadCount = document.getElementById("lead-count");
+
+    async function loadDispatches() {
+      dispatchesList.innerHTML = `<p class="text-slate-500 italic">Querying records...</p>`;
+      let records = [];
+
+      // Try fetching from Supabase if credentials are present
+      if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.anonKey) {
+        try {
+          const res = await fetch(`${SUPABASE_CONFIG.url}/rest/v1/property_dispatches?select=*&order=created_at.desc&limit=25`, {
+            headers: {
+              "apikey": SUPABASE_CONFIG.anonKey,
+              "Authorization": `Bearer ${SUPABASE_CONFIG.anonKey}`
+            }
+          });
+          if (res.ok) records = await res.json();
+        } catch (e) {
+          console.warn("Supabase fetch fallback:", e);
+        }
+      }
+
+      // Fallback to local storage
+      if (records.length === 0) {
+        records = JSON.parse(localStorage.getItem("neonuel_dispatches") || "[]");
+      }
+
+      leadCount.textContent = records.length;
+
+      if (records.length === 0) {
+        dispatchesList.innerHTML = `<p class="text-slate-500 italic p-3 text-center">No dispatches logged in memory yet.</p>`;
+        return;
+      }
+
+      dispatchesList.innerHTML = records.map((r, i) => `
+        <div class="p-3 bg-slate-900 border border-slate-800 rounded space-y-1">
+          <div class="flex justify-between items-center">
+            <span class="text-neonAmber font-bold">${r.client_name || "Unknown Client"}</span>
+            <span class="text-[10px] text-slate-500">${new Date(r.created_at).toLocaleString()}</span>
+          </div>
+          <div class="text-[11px] text-cyan-300"><i class="fas fa-phone text-[9px] mr-1"></i>${r.phone_number} | <i class="fas fa-envelope text-[9px] mr-1"></i>${r.email_address}</div>
+          <div class="text-[10px] text-slate-400">Services: <span class="text-slate-200">${r.services_requested || "N/A"}</span></div>
+          ${r.estimated_total ? `<div class="text-[10px] text-emerald-400">Est. Total: \${r.estimated_total}</div>` : ''}
+          ${r.dispatch_scope ? `<div class="text-[10px] text-slate-400 border-t border-slate-800/80 pt-1 mt-1">Scope: \${r.dispatch_scope}</div>` : ''}
+        </div>
+      `).join("");
+    }
+
+    adminUnlockBtn.addEventListener("click", () => {
+      soundEngine.playClick();
+      if (adminPassInput.value === "3955") {
+        soundEngine.playSuccess();
+        adminAuthErr.classList.add("hidden");
+        adminGateSection.classList.add("hidden");
+        adminFeedSection.classList.remove("hidden");
+        adminFooterActions.classList.remove("hidden");
+        loadDispatches();
+      } else {
+        soundEngine.playClose();
+        adminAuthErr.classList.remove("hidden");
+      }
+    });
+
+    adminPassInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") adminUnlockBtn.click();
+    });
+
+    adminLockBtn.addEventListener("click", () => {
+      soundEngine.playClose();
+      adminPassInput.value = "";
+      adminGateSection.classList.remove("hidden");
+      adminFeedSection.classList.add("hidden");
+      adminFooterActions.classList.add("hidden");
+    });
+
+    refreshLeadsBtn.addEventListener("click", () => {
+      soundEngine.playClick();
+      loadDispatches();
     });
 
     window.onload = function() {

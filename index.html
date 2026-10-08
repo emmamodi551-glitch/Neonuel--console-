@@ -487,7 +487,29 @@
           <i class="fas fa-times text-xs"></i>
         </button>
       </div>
+<!-- 1. Scrollable Messages Area -->
+<div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-3 font-mono text-xs">
+  <!-- Messages display here -->
+</div>
 
+<!-- >>> PASTE STEP 2 HERE (Quick Action Prompt Chips) <<< -->
+<div class="flex gap-2 overflow-x-auto py-2 px-3 bg-slate-950/60 border-t border-slate-800 text-[11px] font-mono">
+  <button type="button" class="quick-chip whitespace-nowrap bg-cyan-950/70 border border-cyan-800 text-cyan-300 px-2.5 py-1 rounded hover:bg-cyan-900 transition-all cursor-pointer">
+    Property Care Scope
+  </button>
+  <button type="button" class="quick-chip whitespace-nowrap bg-amber-950/70 border border-amber-800 text-amber-300 px-2.5 py-1 rounded hover:bg-amber-900 transition-all cursor-pointer">
+    Digital Assets & IT
+  </button>
+  <button type="button" class="quick-chip whitespace-nowrap bg-slate-800 border border-slate-700 text-slate-300 px-2.5 py-1 rounded hover:bg-slate-700 transition-all cursor-pointer">
+    Hours & Dispatch
+  </button>
+</div>
+
+<!-- 2. Text Input & Send Button -->
+<form id="chatForm" class="p-3 bg-slate-900/90 border-t border-slate-800 flex gap-2">
+  <input type="text" id="chatInput" placeholder="Enter diagnostic query..." class="flex-1 bg-slate-950 border border-slate-700 rounded px-3 py-2 text-xs font-mono text-slate-100 focus:outline-none focus:border-cyan-400">
+  <button type="submit" class="bg-cyan-500 hover:bg-cyan-400 text-black px-4 py-2 rounded text-xs font-mono font-bold uppercase transition-all">Send</button>
+</form>
       <!-- Scrollable Message Stream -->
       <div id="chat-messages-container" class="flex-1 overflow-y-auto my-3 space-y-3 pr-1 text-xs font-chakra">
         <!-- Initial System Greeting -->
@@ -1141,6 +1163,115 @@ document.addEventListener("DOMContentLoaded", () => {
       submitBtn.innerText = "TRANSMIT SERVICE DISPATCH";
       submitBtn.classList.remove("opacity-50", "cursor-not-allowed");
     }
+  });
+});
+    // Knowledge Base & Prompt Matrix for Neonuel Chat
+const neonuelKnowledge = [
+  {
+    queryMatch: ["property", "maintenance", "facility", "care", "quote"],
+    reply: "Nuel Property Services provides comprehensive facility oversight, routine site maintenance, and commercial care across Central MN. Use the Property Hub modal to request immediate operational dispatch."
+  },
+  {
+    queryMatch: ["digital", "assets", "website", "systems", "support", "it"],
+    reply: "Nuel Digital Assets specializes in lean automated workflows, digital infrastructure setup, system optimizations, and custom web asset deployment. How can we streamline your operations?"
+  },
+  {
+    queryMatch: ["hours", "contact", "phone", "call", "reach"],
+    reply: "Direct dispatch is available at +1 320-217-3955 or via email at nueldigitalassets@gmail.com. Tap the 'Call' HUD control to dial immediately."
+  },
+  {
+    queryMatch: ["location", "service area", "st. cloud"],
+    reply: "Headquartered in St. Cloud, MN, servicing commercial facilities, digital platforms, and operational networks throughout the regional corridor."
+  }
+];
+
+// Fallback response for unmapped queries
+const defaultChatReply = "Command received. For direct coordination or custom project scoping, please dispatch a request through the Property Hub or call direct dispatch at +1 320-217-3955.";
+</script>
+  <script>
+// Chat Knowledge Matrix
+const neonuelKnowledge = [
+  {
+    queryMatch: ["property", "maintenance", "facility", "care", "quote", "scope"],
+    reply: "Nuel Property Services provides routine site maintenance, facility care, and commercial grounds oversight across Central MN. Open the Property Hub to request dispatch."
+  },
+  {
+    queryMatch: ["digital", "assets", "website", "systems", "support", "it", "code"],
+    reply: "Nuel Digital Assets specializes in lean automated workflows, digital infrastructure, custom web asset development, and remote technical solutions."
+  },
+  {
+    queryMatch: ["hours", "contact", "phone", "call", "reach", "dispatch"],
+    reply: "Direct dispatch line: +1 320-217-3955. Email: nueldigitalassets@gmail.com. You can also tap the 'Call' control on your HUD."
+  },
+  {
+    queryMatch: ["location", "service area", "st. cloud", "area", "where"],
+    reply: "Headquartered in St. Cloud, MN, servicing commercial facilities and digital client workflows throughout the region."
+  }
+];
+
+const fallbackReply = "Command received. For direct assistance, submit an inquiry in the Property Hub or call dispatch at +1 320-217-3955.";
+
+// Helper to render a message bubble in chat
+function appendChatMessage(sender, text) {
+  const container = document.getElementById("chatMessages");
+  if (!container) return;
+
+  const msgDiv = document.createElement("div");
+  msgDiv.className = sender === "user" ? "flex justify-end" : "flex justify-start";
+
+  const bubble = document.createElement("div");
+  bubble.className = sender === "user"
+    ? "bg-cyan-950/80 border border-cyan-500/50 text-cyan-200 px-3 py-2 rounded text-xs max-w-[80%] font-mono"
+    : "bg-slate-900 border border-slate-700 text-slate-200 px-3 py-2 rounded text-xs max-w-[80%] font-mono leading-relaxed";
+
+  bubble.innerText = text;
+  msgDiv.appendChild(bubble);
+  container.appendChild(msgDiv);
+  container.scrollTop = container.scrollHeight;
+}
+
+// Logic to match questions against knowledge base
+function processBotQuery(userText) {
+  const clean = userText.toLowerCase();
+  const found = neonuelKnowledge.find(entry =>
+    entry.queryMatch.some(k => clean.includes(k))
+  );
+  return found ? found.reply : fallbackReply;
+}
+
+// Wire form submission & quick chips when DOM is loaded
+document.addEventListener("DOMContentLoaded", () => {
+  const chatForm = document.getElementById("chatForm");
+  const chatInput = document.getElementById("chatInput");
+
+  // Handle standard typing + send
+  if (chatForm && chatInput) {
+    chatForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const val = chatInput.value.trim();
+      if (!val) return;
+
+      appendChatMessage("user", val);
+      chatInput.value = "";
+
+      setTimeout(() => {
+        const botReply = processBotQuery(val);
+        appendChatMessage("bot", botReply);
+      }, 300);
+    });
+  }
+
+  // Handle quick chip taps
+  document.querySelectorAll(".quick-chip").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      const chipText = chip.innerText.trim();
+      appendChatMessage("user", chipText);
+
+      setTimeout(() => {
+        const botReply = processBotQuery(chipText);
+        appendChatMessage("bot", botReply);
+      }, 300);
+    });
   });
 });
 </script>
